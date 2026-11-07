@@ -20,7 +20,7 @@
   },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json",
-    "test": "node scripts/smoke-tools.mjs && node scripts/smoke-lease.mjs && node scripts/smoke-sessions.mjs && node scripts/smoke-status.mjs && node scripts/smoke-flow.mjs && node scripts/smoke-shutdown.mjs"
+    "test": "node scripts/smoke-tools.mjs && node scripts/smoke-lease.mjs && node scripts/smoke-sessions.mjs && node scripts/smoke-session-spaces.mjs && node scripts/smoke-status.mjs && node scripts/smoke-flow.mjs && node scripts/smoke-shutdown.mjs"
   },
   "peerDependencies": {
     "@earendil-works/pi-coding-agent": "*",
