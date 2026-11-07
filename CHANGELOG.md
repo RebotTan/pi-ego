@@ -11,7 +11,7 @@
 - 35 个 `ego_*` 工具注册到 Pi（导航、快照、点击、填写、JS 求值、截图、CDP、等待、上传下载、验证码、`ego_script` 等），参数沿用 DSH 形状并转换为标准 JSON Schema。
 - `src/host/` 宿主垫片：`subprocess`（stdin 脚本 + stdout/stderr 溢写）、`settings`（`~/.pi/agent/pi-ego.json` 热读）、`define-tool`、`webserver`、`tui-bridge`、`instance`（多实例租约）。
 - 截图以内联图片返回给模型（PNG/JPEG，≤8MB）；非图片结果按 50KB 截断。
-- 会话隔离：每个 Pi 会话默认占用独立 task space（`dsh-agent-<sid8>`），`sessionScopedSpaces` 可关闭。
+- 会话隔离：每个 Pi 会话默认占用独立 task space（`pi-agent-<sid8>`），`sessionScopedSpaces` 可关闭。
 - 多实例协作：`<stateDir>/users/<pid>.json` 登记存活实例，只有最后一个退出的 Pi 才执行 `--stop`，崩溃残留按 pid 存活探测清理。
 - 本地实时观察页：`127.0.0.1` 随机端口 + 随机 token，SSE 实时画面、点击/滚轮/键盘回放、URL 导航；地址写入 `<stateDir>/observe.json` 并在会话内提示。
 - 冒烟脚本 9 个（`scripts/smoke-*.mjs`）与 vitest 单元测试 30 例（schema 映射、会话 space、实例租约、结果解析、观察服务鉴权）。

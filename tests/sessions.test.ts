@@ -3,16 +3,16 @@ import { createSessionScopedSpaceTracker, scopedTargetKey, spaceNameForSession }
 
 describe('spaceNameForSession', () => {
   it('会话前缀被剥掉，截前 8 位拼到 space 名后', () => {
-    expect(spaceNameForSession('session-abcdefgh1234', 'dsh-agent', true)).toBe('dsh-agent-abcdefgh')
+    expect(spaceNameForSession('session-abcdefgh1234', 'pi-agent', true)).toBe('pi-agent-abcdefgh')
   })
 
   it('未开会话隔离时原样返回默认 space', () => {
-    expect(spaceNameForSession('session-abc', 'dsh-agent', false)).toBe('dsh-agent')
+    expect(spaceNameForSession('session-abc', 'pi-agent', false)).toBe('pi-agent')
   })
 
   it('没有 session id（子代理/CLI 直调）时回落到默认 space', () => {
-    expect(spaceNameForSession(undefined, 'dsh-agent', true)).toBe('dsh-agent')
-    expect(spaceNameForSession('', 'dsh-agent', true)).toBe('dsh-agent')
+    expect(spaceNameForSession(undefined, 'pi-agent', true)).toBe('pi-agent')
+    expect(spaceNameForSession('', 'pi-agent', true)).toBe('pi-agent')
   })
 
   it('剔除不安全字符，全部被剔除时回落到默认 space', () => {

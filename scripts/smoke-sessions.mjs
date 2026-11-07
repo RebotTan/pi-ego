@@ -8,14 +8,14 @@ const jiti = createJiti(import.meta.url, { interopDefault: true })
 const { createSessionScopedSpaceTracker, spaceNameForSession } = await jiti.import('../src/plugin.ts')
 
 const problems = []
-const name = (sessionId) => spaceNameForSession(sessionId, 'dsh-agent', true)
+const name = (sessionId) => spaceNameForSession(sessionId, 'pi-agent', true)
 
 if (name('session-alpha') === name('session-beta')) problems.push('scoped sessions share one space name')
-if (name('session-alpha') !== 'dsh-agent-alpha') problems.push(`unexpected scoped name: ${name('session-alpha')}`)
-if (spaceNameForSession('session-alpha', 'dsh-agent', false) !== 'dsh-agent') problems.push('opt-out must keep the base space')
-if (spaceNameForSession(undefined, 'dsh-agent', true) !== 'dsh-agent') problems.push('missing session must fall back to the base space')
+if (name('session-alpha') !== 'pi-agent-alpha') problems.push(`unexpected scoped name: ${name('session-alpha')}`)
+if (spaceNameForSession('session-alpha', 'pi-agent', false) !== 'pi-agent') problems.push('opt-out must keep the base space')
+if (spaceNameForSession(undefined, 'pi-agent', true) !== 'pi-agent') problems.push('missing session must fall back to the base space')
 
-const tracker = createSessionScopedSpaceTracker('dsh-agent', () => true)
+const tracker = createSessionScopedSpaceTracker('pi-agent', () => true)
 if (tracker.forSession('session-alpha') === tracker.forSession('session-beta')) problems.push('trackers are shared across sessions')
 
 console.log('problems=' + problems.length)

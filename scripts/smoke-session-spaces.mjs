@@ -41,13 +41,13 @@ if (beta.error) problems.push(`session-beta navigate: ${beta.error}`)
 if (alpha.error || beta.error) {
   // 报告失败即可，不必再看 space。
 } else {
-  if (!names.has('dsh-agent-alpha')) problems.push(`no dsh-agent-alpha space; saw ${[...names].join(', ')}`)
-  if (!names.has('dsh-agent-beta')) problems.push(`no dsh-agent-beta space; saw ${[...names].join(', ')}`)
-  if (!withTabs('dsh-agent-alpha')) problems.push('dsh-agent-alpha has no tab')
-  if (!withTabs('dsh-agent-beta')) problems.push('dsh-agent-beta has no tab')
+  if (!names.has('pi-agent-alpha')) problems.push(`no pi-agent-alpha space; saw ${[...names].join(', ')}`)
+  if (!names.has('pi-agent-beta')) problems.push(`no pi-agent-beta space; saw ${[...names].join(', ')}`)
+  if (!withTabs('pi-agent-alpha')) problems.push('pi-agent-alpha has no tab')
+  if (!withTabs('pi-agent-beta')) problems.push('pi-agent-beta has no tab')
 }
 
-console.log('spaces:', [...names].filter((name) => name.startsWith('dsh-agent-')).join(', '))
+console.log('spaces:', [...names].filter((name) => name.startsWith('pi-agent-')).join(', '))
 console.log(`problems=${problems.length}`)
 for (const problem of problems) console.log(' -', problem)
 process.exit(problems.length === 0 ? 0 : 1)

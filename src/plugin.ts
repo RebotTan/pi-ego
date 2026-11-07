@@ -84,7 +84,7 @@ const VENDORED_EGO_BIN = fileURLToPath(
   new URL('../runtime/ego-linux/bin/ego-browser.mjs', import.meta.url),
 )
 const DEFAULT_EGO_BIN = VENDORED_EGO_BIN
-const DEFAULT_SPACE = 'dsh-agent'
+const DEFAULT_SPACE = 'pi-agent'
 const DEFAULT_MAX_OUTPUT_BYTES = 4 * 1024 * 1024
 const DEFAULT_GRACE_MS = 15_000
 const TOOL_TIMEOUT_MS = 120_000
@@ -195,7 +195,7 @@ export function currentSessionId(): string | undefined {
  * Two DSH sessions (or two subagents) that both omit `space` used to share one
  * task space — and therefore one tab set and one cursor — so they stole each
  * other's pages. With session-scoped spaces each session gets its own space
- * (`dsh-agent-<sid8>`), hence its own browser context and window.
+ * (`pi-agent-<sid8>`), hence its own browser context and window.
  */
 export function spaceNameForSession(
   sessionId: string | undefined,
@@ -1067,7 +1067,7 @@ export const tabParam = {
 export const spaceParam = {
   type: 'string',
   description:
-    'Task-space name or numeric id. Omit to use this session’s own space (dsh-agent-<session>) when session-scoped spaces are on (default), otherwise the most recently opened or explicitly selected space.',
+    'Task-space name or numeric id. Omit to use this session’s own space (pi-agent-<session>) when session-scoped spaces are on (default), otherwise the most recently opened or explicitly selected space.',
 }
 
 /**
