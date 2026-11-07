@@ -1,0 +1,37 @@
+{
+  "name": "pi-ego-browser",
+  "version": "0.1.0",
+  "description": "ego-lite browser automation for the Pi coding agent: 35 ego_* tools over one isolated Chromium task-space per session.",
+  "type": "module",
+  "license": "MIT",
+  "keywords": [
+    "pi-package",
+    "browser",
+    "automation",
+    "chromium"
+  ],
+  "pi": {
+    "extensions": [
+      "./src/index.ts"
+    ]
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "node scripts/smoke-tools.mjs && node scripts/smoke-lease.mjs && node scripts/smoke-sessions.mjs && node scripts/smoke-status.mjs && node scripts/smoke-flow.mjs && node scripts/smoke-shutdown.mjs"
+  },
+  "peerDependencies": {
+    "@earendil-works/pi-coding-agent": "*",
+    "typebox": "*"
+  },
+  "devDependencies": {
+    "@earendil-works/pi-coding-agent": "^1.5.0",
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.3.0",
+    "@types/ws": "^8.18.2",
+    "typescript": "^5.6.0",
+    "vitest": "^2.1.0"
+  }
+}
