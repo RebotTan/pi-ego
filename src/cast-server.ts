@@ -396,8 +396,12 @@ export function initCastServer(
   // requiring its mere presence closes the remote surface. A local process can
   // still forge the header, but that is the same threat tier as the host's own
   // token fence (a local process can read the process token too).
-  const isTrustedRequest = (req: IncomingMessage): boolean =>
-    /(?:^|;\s*)dsh-auth-[^=]+=/.test(String(req.headers.cookie ?? ''))
+// Pi 宿主没有 dsh-auth cookie：由宿主注入 trustRequest（本项目里是 127.0.0.1 +
+  // 随机 token 校验）。没有注入时退回 DSH 的 cookie 判定，行为不变。
+  const hostTrust = (ctx as EgoContext).get?.('trustRequest')
+  const isTrustedRequest = typeof hostTrust === 'function'
+    ? (hostTrust as (req: IncomingMessage) => boolean)
+    : (req: IncomingMessage): boolean => /(?:^|;\s*)dsh-auth-[^=]+=/.test(String(req.headers.cookie ?? ''))
   const guardHandler = (handler: NonNullable<RegisterRouteOptions['handler']>) =>
     async (req: unknown, resRaw: unknown) => {
       const res = resRaw as ServerResponse

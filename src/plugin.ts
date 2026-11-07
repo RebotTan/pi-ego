@@ -46,7 +46,7 @@ import { BrowserStateStore } from './browser-state.ts'
 import { createTuiBridge } from './host/tui-bridge.ts'
 import { makeEnsureWorker, proxyFrom, proxyPost, readBrowserState, readTaskSpaceGroups } from './worker-client.ts'
 import { safeLocatorSummary, toolCallTitle } from './tui/presentation.ts'
-import { markEgoToolCall, getLastEgoActivity } from './cast-server.ts'
+import { markEgoToolCall, getLastEgoActivity, initCastServer } from './cast-server.ts'
 import { EGO_HELP_INDEX } from './help.ts'
 import { HUMAN_CHECK_PROBE } from './captcha.ts'
 import { resolveConfig, EGO_CLI_BLOCKED, CHROME_BLOCKED, filterArgs, validateEgoBinPath } from './config.ts'
@@ -1594,8 +1594,11 @@ const browserState = new BrowserStateStore()
   registerLoginImport(ctx, cfg, reg)
   registerActionTools(ctx, cfg, reg)
   registerHelpAndDoctor(ctx, cfg, reg)
-// 实时观察服务（/api/ego/*）在阶段 3 由独立的本地 HTTP 服务接入；
-  // 这里不再依赖宿主的 webServer。
+// 实时观察页（/api/ego/*）：Pi 入口注入一个 127.0.0.1 上的 token 鉴权 HTTP 服务，
+// 路由实现仍复用 cast-server，观察页 HTML 由入口挂到 `/`。
+  ctx.inject?.(['webServer'], () => {
+    initCastServer(ctx, cfg as unknown as ResolvedConfig, bridge, ffmpegManager)
+  })
   // Idle reaper (issue #47, opt-in via the idleTimeoutMin setting): the
   // backing Chromium is a singleton that otherwise only stops on --stop or
   // host teardown — measured at ~425 MB idle. After N minutes without an

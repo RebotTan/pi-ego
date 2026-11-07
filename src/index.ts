@@ -12,6 +12,11 @@ import { toJsonSchema, type HostTool } from './host/define-tool.ts'
 import { nodeSubprocess } from './host/subprocess.ts'
 import type { LoggerLike } from './types.ts'
 import type { EgoContext, ToolExec } from './types.ts'
+import { createLocalWebServer } from './host/webserver.ts'
+import { OBSERVE_PAGE } from './host/panel-html.ts'
+import { egoStateDir } from './host/instance.ts'
+import { writeFileSync } from 'node:fs'
+import { join } from 'node:path'
 
 /** Pi 内置工具的输出上限：50KB / 2000 行；这里按字节截断。 */
 const MAX_TEXT_BYTES = 50_000
@@ -30,6 +35,26 @@ export default function egoBrowserExtension(pi: ExtensionAPI): void {
       error: (message: unknown, ...rest: unknown[]) => console.error('[ego] error', message, ...rest),
     },
   )
+const observe = createLocalWebServer({
+    port: Number(process.env.PI_EGO_PORT ?? 0) || 0,
+    page: OBSERVE_PAGE,
+  })
+  disposers.push(() => observe.close())
+  void observe.ready
+    .then((url) => {
+      try {
+        writeFileSync(
+          join(egoStateDir(), 'observe.json'),
+          JSON.stringify({ url, pid: process.pid, startedAt: Date.now() }, null, 2),
+        )
+      } catch {
+        /* 状态目录不可写不影响工具本身 */
+      }
+      logger.info?.(`观察页：${url}`)
+      currentCtx?.ui.notify(`ego 观察页：${url}`, 'info')
+      return url
+    })
+    .catch((error: Error) => logger.warn?.(`观察页启动失败：${error.message}`))
 
   const host: EgoContext = {
     subprocess: nodeSubprocess,
@@ -43,8 +68,18 @@ export default function egoBrowserExtension(pi: ExtensionAPI): void {
       const dispose = fn()
       if (typeof dispose === 'function') disposers.push(dispose as () => void)
     },
-    // Pi 没有宿主 HTTP 服务，实时观察页在阶段 3 独立接入。
-    inject: () => {},
+// 观察页主机：127.0.0.1 + 随机 token；cast-server 的路由由 inject 挂上去。
+    webServer: observe.server,
+    get: (name) => {
+      if (name === 'webServer') return observe.server
+      // 最外层已经校验过 token，路由处理器里再判一次即可恒真。
+      if (name === 'trustRequest') return () => true
+      return undefined
+    },
+    inject: (services, fn) => {
+      if (!services.includes('webServer')) return
+      void observe.ready.then(() => fn(host)).catch(() => {})
+    },
     notify: (message, level) => {
       currentCtx?.ui.notify(message, level)
     },

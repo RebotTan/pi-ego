@@ -20,7 +20,10 @@
   },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json",
-    "test": "node scripts/smoke-tools.mjs && node scripts/smoke-lease.mjs && node scripts/smoke-sessions.mjs && node scripts/smoke-session-spaces.mjs && node scripts/smoke-status.mjs && node scripts/smoke-flow.mjs && node scripts/smoke-shutdown.mjs"
+    "test": "node scripts/smoke-tools.mjs && node scripts/smoke-lease.mjs && node scripts/smoke-sessions.mjs && node scripts/smoke-session-spaces.mjs && node scripts/smoke-status.mjs && node scripts/smoke-flow.mjs && node scripts/smoke-shutdown.mjs && node scripts/smoke-observe.mjs && node scripts/smoke-cast.mjs",
+    "build:worker": "esbuild src/worker/ego-cast-worker.ts --bundle --platform=node --format=esm --target=node22 --external:ws --outfile=bin/ego-cast-worker.mjs",
+    "pretest": "npm run build:worker",
+    "prepare": "npm run build:worker"
   },
   "peerDependencies": {
     "@earendil-works/pi-coding-agent": "*",
@@ -32,6 +35,10 @@
     "@types/react": "^19.3.0",
     "@types/ws": "^8.18.2",
     "typescript": "^5.6.0",
-    "vitest": "^2.1.0"
+    "vitest": "^2.1.0",
+    "esbuild": "^0.21.5"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
   }
 }
