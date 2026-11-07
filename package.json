@@ -4,6 +4,15 @@
   "description": "ego-lite browser automation for the Pi coding agent: 35 ego_* tools over one isolated Chromium task-space per session.",
   "type": "module",
   "license": "MIT",
+  "files": [
+    "bin/ego-cast-worker.mjs",
+    "src/",
+    "runtime/",
+    "extension/",
+    "README.md",
+    "LICENSE",
+    "THIRD_PARTY_NOTICES.md"
+  ],
   "keywords": [
     "pi-package",
     "browser",
