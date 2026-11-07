@@ -9,7 +9,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import type { CollectReader, SpawnSpec, SubprocessHandle, SubprocessService } from '../types.ts'
 
-class Collector implements CollectReader {
+export class Collector implements CollectReader {
   private chunks: Buffer[] = []
   private size = 0
   private truncated = false
@@ -41,13 +41,17 @@ class Collector implements CollectReader {
       this.spillDir = mkdtempSync(join(tmpdir(), 'pi-ego-'))
       this.spillPath = join(this.spillDir, 'output.log')
     }
+    // 超过溢写上限就不再追加：truncated 只报告损失，不约束文件大小。
+    if ((this.outSpilled ?? 0) + chunk.length > this.spillMaxBytes) {
+      this.truncated = true
+      return
+    }
     try {
       appendFileSync(this.spillPath!, chunk)
     } catch {
       /* spill is best-effort */
     }
     this.outSpilled = (this.outSpilled ?? 0) + chunk.length
-    if ((this.outSpilled ?? 0) > this.spillMaxBytes) this.truncated = true
   }
 
   private outSpilled: number | undefined

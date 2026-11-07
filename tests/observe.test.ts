@@ -59,6 +59,12 @@ describe('createLocalWebServer', () => {
     expect(missing.status).toBe(404)
   })
 
+  it('畸形 cookie 不会让服务崩溃，仍返回 401', async () => {
+    const { base } = await start()
+    const res = await fetch(base + '/', { headers: { cookie: 'pi-ego-token=100%' } })
+    expect(res.status).toBe(401)
+  })
+
   it('x-ego-token 头也能通过鉴权', async () => {
     const { base, token } = await start()
     server!.server.register?.({

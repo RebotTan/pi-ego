@@ -33,7 +33,14 @@ function readToken(req: IncomingMessage, url: URL): string {
   if (fromQuery) return fromQuery
   const cookies = String(req.headers.cookie ?? '')
   const match = new RegExp(`(?:^|;\\s*)${COOKIE}=([^;]+)`).exec(cookies)
-  return match ? decodeURIComponent(match[1]) : ''
+  if (!match) return ''
+  // 畸形 cookie（如 % 未转义）会让 decodeURIComponent 抛 URIError；
+  // token 本身是 base64url，无需解码，失败时按原始值比较即可。
+  try {
+    return decodeURIComponent(match[1])
+  } catch {
+    return match[1]
+  }
 }
 
 function sendJson(res: ServerResponse, status: number, body: unknown): void {
