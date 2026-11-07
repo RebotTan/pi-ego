@@ -4,6 +4,15 @@
   "description": "ego-lite browser automation for the Pi coding agent: 35 ego_* tools over one isolated Chromium task-space per session.",
   "type": "module",
   "license": "MIT",
+"license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RebotTan/pi-ego.git"
+  },
+  "homepage": "https://github.com/RebotTan/pi-ego#readme",
+  "bugs": {
+    "url": "https://github.com/RebotTan/pi-ego/issues"
+  },
   "files": [
     "bin/ego-cast-worker.mjs",
     "src/",
