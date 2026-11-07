@@ -10,6 +10,7 @@
     "runtime/",
     "extension/",
     "README.md",
+    "CHANGELOG.md",
     "LICENSE",
     "THIRD_PARTY_NOTICES.md"
   ],
@@ -29,9 +30,10 @@
   },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json",
-    "test": "node scripts/smoke-tools.mjs && node scripts/smoke-lease.mjs && node scripts/smoke-sessions.mjs && node scripts/smoke-session-spaces.mjs && node scripts/smoke-status.mjs && node scripts/smoke-flow.mjs && node scripts/smoke-shutdown.mjs && node scripts/smoke-observe.mjs && node scripts/smoke-cast.mjs",
+    "unit": "vitest run",
+    "smoke:ci": "node scripts/smoke-tools.mjs && node scripts/smoke-lease.mjs && node scripts/smoke-sessions.mjs && node scripts/smoke-session-spaces.mjs && node scripts/smoke-observe.mjs",
     "build:worker": "esbuild src/worker/ego-cast-worker.ts --bundle --platform=node --format=esm --target=node22 --external:ws --outfile=bin/ego-cast-worker.mjs",
-    "pretest": "npm run build:worker",
+    "test": "npm run build:worker && vitest run && npm run smoke:ci && node scripts/smoke-status.mjs && node scripts/smoke-flow.mjs && node scripts/smoke-shutdown.mjs && node scripts/smoke-cast.mjs",
     "prepare": "npm run build:worker"
   },
   "peerDependencies": {

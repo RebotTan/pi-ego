@@ -35,7 +35,9 @@ pi install ./           # 或把本目录链接进 ~/.pi/agent/extensions
 
 ```bash
 npm run typecheck
-npm test        # 构建 worker 后跑 9 个冒烟脚本（含真实浏览器闭环与观察页 SSE）
+npm run unit    # vitest：schema 映射、会话 space、实例租约、结果解析、观察服务鉴权
+npm run smoke:ci # 不需要浏览器的冒烟（CI 跑这一组）
+npm test        # 构建 worker + 单测 + 9 个冒烟脚本（含真实浏览器闭环与观察页 SSE）
 ```
 
 目录结构：`src/index.ts` 是 Pi 入口，`src/plugin.ts` 是原 DSH 插件主体（工具定义与执行路径），`src/host/` 是 Pi 侧的宿主垫片（subprocess / settings / webserver / 实例租约）。

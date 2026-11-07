@@ -48,6 +48,7 @@ function fieldSchema(field: Record<string, unknown>): Record<string, unknown> {
       // 任意 JSON 值：省略 type 即不约束
       return Object.keys(out).length > 0 ? out : {}
     case 'object': {
+      out.type = 'object'
       const properties = field.properties as Record<string, Record<string, unknown>> | undefined
       if (properties !== undefined) {
         out.properties = toJsonSchema(properties).properties
