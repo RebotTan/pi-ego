@@ -3778,7 +3778,7 @@ async function fill(selector, value, options = {}) {
     }
     await withHandle(selector, async ({ objectId, sessionId }) => {
         const focusSource = clearFirst
-            ? "function(){this.focus(); if(this.isContentEditable){const range=document.createRange();range.selectNodeContents(this);const sel=getSelection();sel.removeAllRanges();sel.addRange(range);}else if(typeof this.select==='function') this.select();}"
+            ? "function(){this.focus(); if(this.isContentEditable){const r=document.createRange();r.selectNodeContents(this);const s=getSelection();s.removeAllRanges();s.addRange(r);}else if(typeof this.select==='function') this.select();}"
             : "function(){this.focus();}";
         await cdp("Runtime.callFunctionOn", {
             functionDeclaration: focusSource,
@@ -3786,6 +3786,24 @@ async function fill(selector, value, options = {}) {
             returnByValue: true,
             awaitPromise: false,
         }, sessionId);
+        const read = async () => {
+            const r = await cdp("Runtime.callFunctionOn", {
+                functionDeclaration: "function(){return this.isContentEditable?this.textContent:this.value;}",
+                objectId,
+                returnByValue: true,
+                awaitPromise: false,
+            }, sessionId);
+            return r?.result?.value;
+        };
+        const settle = async () => {
+            await cdp("Runtime.callFunctionOn", {
+                functionDeclaration: "function(){return new Promise(function(r){requestAnimationFrame(function(){requestAnimationFrame(function(){setTimeout(r,0);});});});}",
+                objectId,
+                returnByValue: true,
+                awaitPromise: true,
+            }, sessionId);
+        };
+        const before = String((await read()) ?? "");
         if (clearFirst) {
             await cdp("Runtime.callFunctionOn", {
                 functionDeclaration: "function(){if(this.isContentEditable){this.textContent='';}else if('value' in this){this.value='';}else{throw new Error('fill target is not editable');} this.dispatchEvent(new InputEvent('input',{bubbles:true,inputType:'deleteContentBackward'}));}",
@@ -3794,13 +3812,25 @@ async function fill(selector, value, options = {}) {
                 awaitPromise: false,
             }, sessionId);
         }
-        await cdp("Input.insertText", { text: value }, sessionId);
+        const expected = String(value);
+        const target = clearFirst ? expected : before + expected;
+        await cdp("Input.insertText", { text: expected }, sessionId);
+        await settle();
+        // Controlled inputs (Vue v-model / React) may keep their old model and wipe the
+        // DOM value on blur; reconcile through the native setter so both agree.
         await cdp("Runtime.callFunctionOn", {
-            functionDeclaration: "function(){this.dispatchEvent(new Event('input',{bubbles:true})); this.dispatchEvent(new Event('change',{bubbles:true}));}",
+            functionDeclaration: "function(v){if(this.isContentEditable){if(this.textContent!==v) this.textContent=v;}else{const d=Object.getOwnPropertyDescriptor(Object.getPrototypeOf(this),'value');if(d&&d.set){d.set.call(this,v);}else{this.value=v;}}this.dispatchEvent(new Event('input',{bubbles:true}));this.dispatchEvent(new Event('change',{bubbles:true}));return this.isContentEditable?this.textContent:this.value;}",
             objectId,
+            arguments: [{ value: target }],
             returnByValue: true,
             awaitPromise: false,
         }, sessionId);
+        await settle();
+        const got = await read();
+        const ok = clearFirst ? got === expected : typeof got === "string" && got.endsWith(expected);
+        if (!ok) {
+            throw new Error(`fill: value did not stick on ${JSON.stringify(selector)} (got ${JSON.stringify(got)}; the field may be controlled or readonly)`);
+        }
     });
 }
 /**
