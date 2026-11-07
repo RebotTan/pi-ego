@@ -4,7 +4,6 @@
   "description": "ego-lite browser automation for the Pi coding agent: 35 ego_* tools over one isolated Chromium task-space per session.",
   "type": "module",
   "license": "MIT",
-"license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/RebotTan/pi-ego.git"
@@ -42,7 +41,7 @@
     "unit": "vitest run",
     "smoke:ci": "node scripts/smoke-tools.mjs && node scripts/smoke-lease.mjs && node scripts/smoke-sessions.mjs && node scripts/smoke-session-spaces.mjs && node scripts/smoke-observe.mjs",
     "build:worker": "esbuild src/worker/ego-cast-worker.ts --bundle --platform=node --format=esm --target=node22 --external:ws --outfile=bin/ego-cast-worker.mjs",
-    "test": "npm run build:worker && vitest run && npm run smoke:ci && node scripts/smoke-status.mjs && node scripts/smoke-flow.mjs && node scripts/smoke-shutdown.mjs && node scripts/smoke-cast.mjs",
+    "test": "npm run build:worker && vitest run && npm run smoke:ci && node scripts/smoke-status.mjs && node scripts/smoke-flow.mjs && node scripts/smoke-extended.mjs && node scripts/smoke-shutdown.mjs && node scripts/smoke-cast.mjs",
     "prepare": "npm run build:worker"
   },
   "peerDependencies": {
