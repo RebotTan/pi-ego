@@ -141,6 +141,8 @@ export interface ResolvedConfig {
   /** Minutes without an ego_* call before the resident process is stopped. 0 = keep until unmount. */
   residentIdleMin: number
   chromePath: string
+  /** macOS only: pass `--use-mock-keychain` to Chrome so cookies flush to disk (issue #93). */
+  useMockKeychain: boolean
   captureBackend: 'auto' | 'cdp' | 'ffmpeg'
   streamProfile: 'low' | 'balanced' | 'high'
   cdpFps: number
@@ -164,7 +166,9 @@ export interface ResolvedConfig {
 }
 
 /** Raw composition-layer config (may contain legacy / extra keys). */
-export interface RawConfig extends Partial<ResolvedConfig> {
+export interface RawConfig extends Omit<Partial<ResolvedConfig>, 'useMockKeychain'> {
+  // JSON settings may store booleans as strings or 0/1; resolveConfig normalizes them.
+  useMockKeychain?: boolean | string | number
   castFpsCap?: number
   screencastQuality?: number
   screencastMaxWidth?: number

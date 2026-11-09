@@ -31,6 +31,8 @@ pi install ./           # 或把本目录链接进 ~/.pi/agent/extensions
 
 `~/.pi/agent/pi-ego.json`（或 `PI_EGO_CONFIG` 指定的文件），每次读盘、改了即生效。常用键：`chromePath`、`defaultSpace`、`sessionScopedSpaces`、`idleTimeoutMin`、`disableFrameRelay`。这些键在每次调用时读取，无需重启会话。
 
+macOS 专用：`"useMockKeychain": true` 会让 Chrome 以 `--use-mock-keychain` 启动。Chrome 156+ / macOS 26+ 上用登录 Keychain 时 cookie 可能不落盘（重启浏览器后登录态丢失，上游 issue #93）；开启后恢复落盘（约 60 秒后才写入 `Default/Cookies`），代价是降低静态 cookie 加密强度，非必需请保持关闭。需要浏览器冷启动（先 `ego-browser --stop` 或重启 Pi）。
+
 ## 开发
 
 ```bash

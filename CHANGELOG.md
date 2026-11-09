@@ -2,6 +2,18 @@
 
 本项目遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/) 与 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [0.1.1] - 2026-11-09
+
+合并上游 `ego-browser` v0.9.12（macOS Cookie 落盘修复），并修复 `ego_fill` 在受控输入上的静默失败。
+
+### Added
+
+- `useMockKeychain` 配置（默认关闭，仅 macOS 生效）：注入 `EGO_LINUX_USE_MOCK_KEYCHAIN=1`，Chrome 以 `--use-mock-keychain` 启动，恢复 cookie 落盘（上游 issue #93）。用户自己设置的同名环境变量仍然优先；`ego_doctor` 会打印当前状态。
+
+### Fixed
+
+- `ego_fill` 在 Vue v-model / React 受控输入上只改 DOM 不改框架 model，随后 blur 把值清掉，却返回成功。现在 `insertText` 后用原生 setter 重新写入并派发 `input`/`change`，再回读校验，值未落盘会报错而不是静默成功。
+
 ## [0.1.0] - 2026-11-07
 
 首个可用的 Pi 扩展版本：把 DSH 插件 `ego-browser` 迁到 Pi，工具行为保持与浏览器运行时一致。

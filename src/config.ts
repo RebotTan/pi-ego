@@ -185,6 +185,7 @@ export function resolveConfig(config: RawConfig = {}): ResolvedConfig {
       : { fps: 20, width: 1280, bitrateKbps: 4000 }
   return {
     chromePath: typeof config.chromePath === 'string' ? config.chromePath : '',
+    useMockKeychain: typeof config.useMockKeychain === 'boolean' ? config.useMockKeychain : config.useMockKeychain === 'true' || config.useMockKeychain === '1' || config.useMockKeychain === 1,
     captureBackend: oneOf(config.captureBackend, ['auto', 'cdp', 'ffmpeg'], 'auto'),
     streamProfile: selectedProfile,
     cdpFps: finiteIn(config.cdpFps, 5, 30) ? config.cdpFps : legacyFps,
